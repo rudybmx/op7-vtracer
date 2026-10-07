@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funil de Leads — Componente</title>
+<style>
+  :root {
+    --roxo: #760472;
+    --rosa: #bc0c55;
+    --laranja: #ff9d00;
+    --azul: #006887;
+    --bg: #f8f9fb;
+    --text: #2d2d3a;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 20px;
+  }
+
+  .funil-container {
+    max-width: 850px;
+    width: 100%;
+  }
+  .funil-title {
+    text-align: center;
+    margin-bottom: 40px;
+  }
+  .funil-title h2 {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .funil-title p {
+    color: #6b7280;
+    font-size: 15px;
+  }
+
+  .funil-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .camada {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    text-align: center;
+    cursor: default;
+    transition: transform 0.25s, filter 0.25s;
+  }
+  .camada:hover {
+    transform: scale(1.03);
+    filter: brightness(1.1);
+    z-index: 2;
+  }
+
+  .camada-inner {
+    position: relative;
+    z-index: 1;
+    padding: 24px 20px;
+    width: 100%;
+  }
+  .camada-numero {
+    font-size: 38px;
+    font-weight: 900;
+    opacity: 0.25;
+    line-height: 1;
+    margin-bottom: 2px;
+  }
+  .camada-icono {
+    font-size: 26px;
+    margin-bottom: 4px;
+  }
+  .camada-titulo {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+  }
+  .camada-sub {
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.85;
+    margin-top: 4px;
+    max-width: 280px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Cada camada é um trapézio via clip-path */
+  /* Quanto mais desce, mais estreito */
+
+  .c1 { 
+    width: 100%; 
+    background: var(--roxo); 
+    clip-path: polygon(0% 0%, 100% 0%, 94% 100%, 6% 100%);
+    border-radius: 18px 18px 0 0;
+    padding-top: 10px;
+  }
+  .c2 { 
+    width: 94%; 
+    background: linear-gradient(180deg, var(--roxo), var(--rosa)); 
+    clip-path: polygon(0% 0%, 100% 0%, 93.6% 100%, 6.4% 100%);
+    margin-top: -2px;
+  }
+  .c3 { 
+    width: 88%; 
+    background: var(--rosa); 
+    clip-path: polygon(0% 0%, 100% 0%, 93.2% 100%, 6.8% 100%);
+    margin-top: -2px;
+  }
+  .c4 { 
+    width: 82%; 
+    background: linear-gradient(180deg, var(--rosa), var(--laranja)); 
+    clip-path: polygon(0% 0%, 100% 0%, 92.7% 100%, 7.3% 100%);
+    margin-top: -2px;
+  }
+  .c5 { 
+    width: 76%; 
+    background: var(--laranja); 
+    clip-path: polygon(0% 0%, 100% 0%, 92.1% 100%, 7.9% 100%);
+    margin-top: -2px;
+  }
+  .c6 { 
+    width: 70%; 
+    background: linear-gradient(180deg, var(--laranja), var(--azul)); 
+    clip-path: polygon(0% 0%, 100% 0%, 91.4% 100%, 8.6% 100%);
+    margin-top: -2px;
+  }
+  .c7 { 
+    width: 64%; 
+    background: var(--azul); 
+    clip-path: polygon(0% 0%, 100% 0%, 90.6% 100%, 9.4% 100%);
+    border-radius: 0 0 18px 18px;
+    margin-top: -2px;
+    padding-bottom: 10px;
+  }
+
+  /* Setas entre camadas */
+  .seta {
+    color: #c4c9d4;
+    font-size: 20px;
+    line-height: 1;
+    margin: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Estatísticas */
+  .funil-stats {
+    display: flex;
+    justify-content: center;
+    gap: 36px;
+    margin-top: 36px;
+    flex-wrap: wrap;
+  }
+  .funil-stat {
+    text-align: center;
+  }
+  .funil-stat .valor {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--text);
+  }
+  .funil-stat .rotulo {
+    font-size: 11px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  @media (max-width: 600px) {
+    .c1, .c2, .c3, .c4, .c5, .c6, .c7 { 
+      clip-path: none; 
+      border-radius: 12px;
+      width: 100% !important;
+      margin-top: 6px;
+    }
+    .seta { display: none; }
+    .funil-stats { gap: 16px; }
+    .camada-titulo { font-size: 16px; }
+    .camada-sub { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="funil-container">
+
+  <div class="funil-title">
+    <h2>Funil de Leads</h2>
+    <p>Da visita ao cliente — acompanhe cada etapa da conversão</p>
+  </div>
+
+  <div class="funil-wrapper">
+
+    <div class="camada c1">
+      <div class="camada-inner">
+        <div class="camada-numero">01</div>
+        <div class="camada-icono">🌐</div>
+        <div class="camada-titulo">Visitantes</div>
+        <div class="camada-sub">Tráfego do site · Redes sociais · Busca orgânica</div>
+      </div>
+    </div>
+
+    <div class="seta">▼</div>
+
+    <div class="camada c2">
+      <div class="camada-inner">
+        <div class="camada-numero">02</div>
+        <div class="camada-icono">📄</div>
+        <div class="camada-titulo">Leads</div>
+        <div class="camada-sub">Formulários · Landing pages · Materiais ricos</div>
+      </div>
+    </div>
+
+    <div class="seta">▼</div>
+
+    <div class="camada c3">
+      <div class="camada-inner">
+        <div class="camada-numero">03</div>
+        <div class="camada-icono">⭐</div>
+        <div class="camada-titulo">Leads Qualificados (MQL)</div>
+        <div class="camada-sub">Engajamento · Pontuação · Perfil ideal de cliente</div>
+      </div>
+    </div>
+
+    <div class="seta">▼</div>
+
+    <div class="camada c4">
+      <div class="camada-inner">
+        <div class="camada-numero">04</div>
+        <div class="camada-icono">💬</div>
+        <div class="camada-titulo">Oportunidades (SQL)</div>
+        <div class="camada-sub">Contato comercial · Proposta · Negociação</div>
+      </div>
+    </div>
+
+    <div class="seta">▼</div>
+
+    <div class="camada c5">
+      <div class="camada-inner">
+        <div class="camada-numero">05</div>
+        <div class="camada-icono">🤝</div>
+        <div class="camada-titulo">Proposta Enviada</div>
+        <div class="camada-sub">Follow-up · Ajustes · Fechamento</div>
+      </div>
+    </div>
+
+    <div class="seta">▼</div>
+
+    <div class="camada c6">
+      <div class="camada-inner">
+        <div class="camada-numero">06</div>
+        <div class="camada-icono">💰</div>
+        <div class="camada-titulo">Fechamento</div>
+        <div class="camada-sub">Contrato assinado · Onboarding</div>
+      </div>
+    </div>
+
+    <div class="seta">▼</div>
+
+    <div class="camada c7">
+      <div class="camada-inner">
+        <div class="camada-numero">07</div>
+        <div class="camada-icono">🎯</div>
+        <div class="camada-titulo">Clientes</div>
+        <div class="camada-sub">Recorrência · Upsell · Indicação</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="funil-stats">
+    <div class="funil-stat">
+      <div class="valor">10.000</div>
+      <div class="rotulo">Visitantes/mês</div>
+    </div>
+    <div class="funil-stat">
+      <div class="valor">500</div>
+      <div class="rotulo">Leads</div>
+    </div>
+    <div class="funil-stat">
+      <div class="valor">50</div>
+      <div class="rotulo">Oportunidades</div>
+    </div>
+    <div class="funil-stat">
+      <div class="valor">15</div>
+      <div class="rotulo">Novos clientes</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
